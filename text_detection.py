@@ -120,13 +120,20 @@ boxes = non_max_suppression(np.array(rects), probs=confidences)
 for (startX, startY, endX, endY) in boxes:
 	# scale the bounding box coordinates based on the respective
 	# ratios
-	startX = int(startX * rW)
-	startY = int(startY * rH)
-	endX = int(endX * rW)
-	endY = int(endY * rH)
+	extendWind = 0.05
+	startX = int(startX * rW - round(startY * extendWind)) 
+	startY = int(startY * rH - round(startX * extendWind))
+	endX = int(endX * rW + round(startY * extendWind))
+	endY = int(endY * rH + round(endX * extendWind))
 
 	# draw the bounding box on the image
 	cv2.rectangle(orig, (startX, startY), (endX, endY), (0, 255, 0), 2)
+
+	# save croped img
+
+	crop_img = orig.copy()[startY:endY,startX:endX]
+	cv2.imwrite(str(startX) +".png", crop_img)
+
 
 # show the output image
 cv2.imshow("Text Detection", orig)
